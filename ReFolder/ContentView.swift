@@ -14,7 +14,7 @@ struct ContentView: View {
     @State var selectedFolderURLs: [URL] = []
     
     // A state variable to store the color chosen from the color picker.
-    @State private var selectedColor = Color(NSColor.systemBlue)
+    @State private var selectedColor = Color.blue
     
     // A new state variable to control showing the success alert.
     @State private var showSuccessAlert = false
@@ -72,7 +72,7 @@ struct ContentView: View {
             }
 
             // The color picker for the user to choose their desired color.
-            LegacyColorPanel(color: $selectedColor)
+            ColorPicker("Choose a Color", selection: $selectedColor)
 
             // The button to apply the changes.
             Button {
