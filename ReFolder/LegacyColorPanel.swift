@@ -10,7 +10,7 @@ import SwiftUI
 import AppKit
 
 struct LegacyColorPanel: NSViewRepresentable {
-    @Binding var color: Color            // ← change to SwiftUI.Color
+    @Binding var color: Color            
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 

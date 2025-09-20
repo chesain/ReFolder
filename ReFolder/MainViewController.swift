@@ -19,13 +19,13 @@ final class ViewController: NSViewController {
     @IBAction func chooseColor(_ sender: Any?) {
         let panel = NSColorPanel.shared                      // singleton instance
         panel.setTarget(self)
-        panel.setAction(#selector(handleColor(_:)))          // receives color changes
-        panel.isContinuous = true                            // deliver live updates
-        panel.showsAlpha  = true                             // include opacity slider
-        panel.mode        = .RGB                             // start in RGB wheel
+        panel.setAction(#selector(handleColor(_:)))
+        panel.isContinuous = true
+        panel.showsAlpha  = true
+        panel.mode        = .RGB
         panel.color       = view.layer?.backgroundColor
                             .flatMap(NSColor.init(cgColor:)) ?? .systemBlue
-        panel.makeKeyAndOrderFront(nil)                      // bring panel onscreen
+        panel.makeKeyAndOrderFront(nil)                      
     }
 
     @objc private func handleColor(_ sender: NSColorPanel) {

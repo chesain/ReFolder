@@ -6,17 +6,29 @@
 //
 
 import SwiftUI
+import AppKit
+
+
+func refreshFinderIcon(for url: URL) {
+    let script = #"tell application "Finder" to update POSIX file "\#(url.path)""#
+    Task.detached {
+        let proc = Process()
+        proc.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+        proc.arguments = ["-e", script]
+        try? proc.run();  proc.waitUntilExit()
+    }
+}
 
 struct ContentView: View {
     
     
-    // A state variable to hold an array of URLs for the folders the user picks.
+    
     @State var selectedFolderURLs: [URL] = []
     
-    // A state variable to store the color chosen from the color picker.
+    
     @State private var selectedColor = Color.blue
     
-    // A new state variable to control showing the success alert.
+    
     @State private var showSuccessAlert = false
 
     var body: some View {
@@ -27,7 +39,7 @@ struct ContentView: View {
                 .foregroundColor(selectedColor)
                 .padding(.top)
 
-            // This button's action is to open the system's file selection panel.
+            
             Button {
                 let panel = NSOpenPanel()
                 panel.title = "Select one or more folders"
@@ -35,7 +47,7 @@ struct ContentView: View {
                 panel.canChooseDirectories = true  // User can only select directories.
                 panel.allowsMultipleSelection = true // Let the user pick many folders at once.
                 
-                // Show the panel. If the user clicks the "Open" button...
+                
                 if panel.runModal() == .OK {
                     // ...we get the URLs of their chosen folders and store them.
                     //selectedFolderURLs = panel.urls
@@ -46,7 +58,7 @@ struct ContentView: View {
                     }
                 }
             } label: {
-                // The button's appearance.
+                
                 Label("Select Folders...", systemImage: "folder.badge.plus")
                     .font(.headline)
                     .padding()
@@ -55,14 +67,13 @@ struct ContentView: View {
             }
             .buttonStyle(.plain) // Use a simpler button style.
 
-            // Display a list of the folders that have been selected.
-            // This section only appears if at least one folder is chosen.
+            
             if !selectedFolderURLs.isEmpty {
                 List {
                     Section(header: Text("Folders to Recolor (\(selectedFolderURLs.count))")) {
                         // Loop through the array of URLs and create a text view for each one.
                         ForEach(selectedFolderURLs, id: \.self) { url in
-                            // Show the folder icon and just the name of the folder.
+                           
                             Label(url.lastPathComponent, systemImage: "folder")
                         }
                     }
@@ -71,19 +82,17 @@ struct ContentView: View {
                 .cornerRadius(10)
             }
 
-            // The color picker for the user to choose their desired color.
+            
             ColorPicker("Choose a Color", selection: $selectedColor)
 
-            // The button to apply the changes.
+            
             Button {
-                // Loop through every folder URL the user selected.
+                
                 for url in selectedFolderURLs {
-                    // --- KEY FIX: Securely access the folder before changing it ---
-                    // This tells macOS to activate the permission we got from the open panel.
+                    
                     let didStartAccessing = url.startAccessingSecurityScopedResource()
                     
-                    // The 'defer' block ensures that we stop accessing the resource
-                    // even if something goes wrong.
+                    
                     defer {
                         if didStartAccessing {
                             url.stopAccessingSecurityScopedResource()
@@ -93,6 +102,7 @@ struct ContentView: View {
                     
                     
                     FolderIconManager.changeColor(of: url, to: selectedColor)
+                    refreshFinderIcon(for: url)
                 }
                 
                 // After the loop finishes, trigger the success alert.
@@ -106,7 +116,7 @@ struct ContentView: View {
                     .padding()
                     .frame(maxWidth: .infinity) // Make the button wide.
                     .foregroundColor(.white)
-                    .background(selectedFolderURLs.isEmpty ? Color.gray : selectedColor) // Dynamic background color!
+                    .background(selectedFolderURLs.isEmpty ? Color.gray : selectedColor)
                     .cornerRadius(10)
             }
             .buttonStyle(.plain)
@@ -115,9 +125,8 @@ struct ContentView: View {
 
         }
         .padding()
-        .frame(minWidth: 450, minHeight: 450) // Give our window a nice default size.
-        // Add the .alert() modifier to the main view. It will watch the
-        // 'showSuccessAlert' variable and appear when it becomes true.
+        .frame(minWidth: 450, minHeight: 450) // Give window a nice default size.
+        
         .alert("Success!", isPresented: $showSuccessAlert) {
             Button("OK", role: .cancel) { }
         } message: {
