@@ -11,12 +11,12 @@ ReFolder is a tiny macOS utility I made to quickly recolor multiple folders with
 ## Before / After
 
 **Before**  
-![Before](readme_assets/ui.png)
-![](readme_assets/before.png)
+![Before](docs/images/readme_assets/ui.png)
+![](docs/images/readme_assets/before.png)
 
 **After**  
-![After](readme_assets/ui-apply.png)
-![](readme_assets/after.png)
+![After](docs/images/readme_assets/ui-apply.png)
+![](docs/images/readme_assets/after.png)
 
 ## How to use
 
